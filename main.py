@@ -14,32 +14,43 @@ def stop():
     active = False
 
 
-def keypress(k):
+def keypress(k, wait):
     keyboard.send(k, do_release=False)
-    wait = random.uniform(0.06, 0.3)
-    print(f"{keys}, {wait} ")
+    print(f"S{shark}: {counter}/{length} -> {keys}, {round(wait, 2)} ")
 
     time.sleep(wait)
     keyboard.release(k)
 
 
 sharks = SharkData()
-shark_1 = sharks.sort_data(shark)
+active_shark = sharks.sort_data(shark)
 
-length = shark_1["Shark"].count()
+sharks.describe_data(active_shark)
+
+length = active_shark["Shark"].count()
 keyboard.add_hotkey('shift+2', lambda: stop())
 
 print(f"Keyboard ready and waiting! Input Length {length} for shark {shark}")
 keyboard.wait('shift+1')
 
 while active:
-    s = shark_1.iloc[counter]
+    s = active_shark.iloc[counter]
 
     keys = [
         "s" if s['up'] else "down",
         "right" if s['right'] else "left"
     ]
 
-    keypress(keys)
+    wait = random.uniform(0.06, 0.3)
 
-    counter = (counter + 1) if counter < length - 1 else 0
+    keypress(keys, wait)
+
+    '''
+    if counter < length - 1:
+        counter += 1
+    else:
+        counter = 0
+
+        shark = shark + 1 if shark < 10 else 1
+        length = active_shark["Shark"].count()
+    '''
